@@ -108,7 +108,7 @@
 							</inputSpec>
 							<generatorName>spring</generatorName>
 							<apiPackage>com.musala.task.drone.api</apiPackage>
-							<modelPackage>com.musala.task.drone.entity</modelPackage>
+							<modelPackage>com.musala.task.drone.model</modelPackage>
 							<configOptions>
 								<sourceFolder>src/main/java/</sourceFolder>
 								<delegatePattern>true</delegatePattern>

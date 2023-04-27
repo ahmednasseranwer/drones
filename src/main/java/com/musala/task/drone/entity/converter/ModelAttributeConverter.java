@@ -1,11 +1,11 @@
 package com.musala.task.drone.entity.converter;
 
-import com.musala.task.drone.entity.DroneModel;
+import com.musala.task.drone.model.DroneModel;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import static com.musala.task.drone.entity.DroneModel.ModelEnum.*;
+import static com.musala.task.drone.model.DroneModel.ModelEnum.*;
 
 @Converter
 public class ModelAttributeConverter implements AttributeConverter<DroneModel.ModelEnum, Integer> {

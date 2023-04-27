@@ -1,9 +1,12 @@
 package com.musala.task.drone.controller;
 
+import com.musala.task.drone.aop.LogExecutionTime;
 import com.musala.task.drone.api.DroneApi;
-import com.musala.task.drone.entity.DroneBattery;
-import com.musala.task.drone.entity.DroneModel;
+import com.musala.task.drone.model.DroneBattery;
+import com.musala.task.drone.model.DroneModel;
+import com.musala.task.drone.model.MedicationItemRequest;
 import com.musala.task.drone.service.DroneService;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,7 +19,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(path="/api")
+@RequestMapping(path = "/api")
 public class DroneController implements DroneApi {
 
     @Autowired
@@ -26,12 +29,16 @@ public class DroneController implements DroneApi {
      * POST /drone : register drone
      * register drone
      *
-     * @param droneModel  (required)
+     * @param droneModel (required)
      * @return successful operation (status code 200)
-     *         or Bad Request (status code 400)
+     * or Bad Request (status code 400)
      */
-
-    @PostMapping(value = "/drone")
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/drone",
+            produces = { "application/json" },
+            consumes = { "application/json" }
+    )
     @Override
     public ResponseEntity<Void> _registerDrone(@Valid @RequestBody DroneModel droneModel) {
         Long droneId = droneService.register(droneModel);
@@ -44,7 +51,7 @@ public class DroneController implements DroneApi {
                 .buildAndExpand(droneId)
                 .toUri();
 
-        return  ResponseEntity.created(location).headers(responseHeaders).build();
+        return ResponseEntity.created(location).headers(responseHeaders).build();
     }
 
     /**
@@ -53,10 +60,13 @@ public class DroneController implements DroneApi {
      *
      * @param droneId drone id (required)
      * @return successful operation (status code 200)
-     *         or Bad Request (status code 400)
+     * or Bad Request (status code 400)
      */
-
-    @GetMapping(value = "/drone/{droneId}/battery")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/drone/{droneId}/battery",
+            produces = { "application/json" }
+    )
     @Override
     public ResponseEntity<DroneBattery> _checkBattery(@PathVariable("droneId") Long droneId) {
         return new ResponseEntity<>(droneService.getBatteryByDroneId(droneId), HttpStatus.OK);
@@ -68,14 +78,58 @@ public class DroneController implements DroneApi {
      * get all drones with idle status
      *
      * @return successful operation (status code 200)
-     *         or Bad Request (status code 400)
+     * or Bad Request (status code 400)
      */
-
-    @GetMapping(value = "/drone/status/idle")
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/drone/status/idle",
+            produces = { "application/json" })
     @Override
     public ResponseEntity<List<DroneModel>> _idleDrone() {
         return new ResponseEntity<>(droneService.findIdleDrones(), HttpStatus.OK);
-
     }
+
+
+    /**
+     * POST /drone/{droneId}/medication-items : loading drone with medication items
+     * loading drone with medixcation items
+     *
+     * @param droneId               drone id (required)
+     * @param medicationItemRequest (optional)
+     * @return successful operation (status code 200)
+     * or Bad Request (status code 400)
+     */
+    @RequestMapping(
+            method = RequestMethod.POST,
+            value = "/drone/{droneId}/medication-items",
+            produces = { "application/json" },
+            consumes = { "application/json" }
+    )
+    @Override
+    public ResponseEntity<Void> _loadMedicationItems(@PathVariable("droneId") Long droneId, @Valid @RequestBody(required = false) List<MedicationItemRequest> medicationItemRequest) {
+        droneService.addMedicationItems(droneId,medicationItemRequest);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    /**
+     * GET /drone/{droneId}/medication-items : get all loaded medication items.
+     * get all loaded medication items.
+     *
+     * @param droneId drone id (required)
+     * @return successful operation (status code 200)
+     *         or Bad Request (status code 400)
+     */
+    @RequestMapping(
+            method = RequestMethod.GET,
+            value = "/drone/{droneId}/medication-items",
+            produces = { "application/json" }
+    )
+    @Override
+    public ResponseEntity<List<MedicationItemRequest>> _getMedicationItemsByDroneSerialNumber(
+            @Parameter(name = "droneId", description = "drone id", required = true) @PathVariable("droneId") Long droneId
+    ) {
+        return new ResponseEntity<>(droneService.getMedicationItems(droneId), HttpStatus.OK);
+    }
+
 
 }

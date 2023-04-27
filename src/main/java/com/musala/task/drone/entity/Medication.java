@@ -3,6 +3,7 @@ package com.musala.task.drone.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,9 +17,13 @@ public class Medication {
     private Integer id;
 
     @Column(name = "code",nullable = false)
+    @Pattern(regexp = "^[A-Z0-9_]+$",message = "allowed only upper case letters, underscore and numbers")
+
+
     private String code;
 
     @Column(name = "name",nullable = false)
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+$",message = "allowed only letters, numbers, ‘-‘, ‘_’")
     private String name;
 
     @Column(name = "weight",nullable = false)

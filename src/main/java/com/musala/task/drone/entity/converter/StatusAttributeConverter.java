@@ -2,12 +2,12 @@ package com.musala.task.drone.entity.converter;
 
 
 
-import com.musala.task.drone.entity.DroneModel;
+import com.musala.task.drone.model.DroneModel;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import static com.musala.task.drone.entity.DroneModel.StateEnum.*;
+import static com.musala.task.drone.model.DroneModel.StateEnum.*;
 
 
 @Converter

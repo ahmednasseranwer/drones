@@ -1,6 +1,6 @@
 package com.musala.task.drone.exception;
 
-import com.musala.task.drone.entity.ErrorApiResponse;
+import com.musala.task.drone.model.ErrorApiResponse;
 import com.musala.task.drone.exception.custom.NotFoundException;
 import com.musala.task.drone.exception.custom.ProblemRunTimeException;
 import org.springframework.beans.TypeMismatchException;
@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
@@ -21,6 +22,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.RollbackException;
+import javax.transaction.TransactionalException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -80,7 +83,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             errors.add(violation.getRootBeanClass().getName() + " " + violation.getPropertyPath() + ": " + violation.getMessage());
         }
 
-        return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.CONFLICT.value(), ex.getConstraintViolations().toString()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.CONFLICT.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     // 404
@@ -150,4 +153,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler({TransactionSystemException.class})
+    public ResponseEntity<Object> handleAll(final TransactionSystemException ex, final WebRequest request) {
+        logger.info(ex.getClass().getName());
+        logger.error("error", ex);
+
+        return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.BAD_REQUEST.value(), ex.getCause().getCause().getLocalizedMessage()), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

@@ -1,6 +1,6 @@
 package com.musala.task.drone.exception.custom;
 
-import com.musala.task.drone.entity.ErrorApiResponse;
+import com.musala.task.drone.model.ErrorApiResponse;
 import lombok.Getter;
 
 @Getter

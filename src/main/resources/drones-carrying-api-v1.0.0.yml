@@ -207,6 +207,7 @@ components:
           example: 32123123
         image:
           type: string
+          format: byte
           example: "123178234618972364781263478962139784691827364987623467892345234523452345234523452345762394"
     ErrorApiResponse:
       type: object
