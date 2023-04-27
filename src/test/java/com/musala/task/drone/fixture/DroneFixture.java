@@ -4,6 +4,7 @@ import com.musala.task.drone.entity.Drone;
 import com.musala.task.drone.entity.Medication;
 import com.musala.task.drone.model.DroneModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DroneFixture {
@@ -23,6 +24,12 @@ public class DroneFixture {
         medication.setName("NAME");
         drone.setMedicationList(List.of(medication));
         return drone;
+    }
+
+    public static List<Drone> createdDrones(){
+      List<Drone> drones = new ArrayList<>();
+      drones.add(createdDrone());
+      return drones;
     }
 
     public static Drone createdDroneWithTENBattery(){

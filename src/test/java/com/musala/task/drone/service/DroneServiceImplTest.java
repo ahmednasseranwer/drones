@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.musala.task.drone.fixture.DroneFixture.*;
-import static com.musala.task.drone.fixture.MedicationItemFixture.medicationItemRequestModel;
+import static com.musala.task.drone.fixture.MedicationItemFixture.medicationItemRequestModelList;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -50,7 +50,7 @@ public class DroneServiceImplTest {
     @Test
     @DisplayName("when the get all idle drone from Database successful")
     public void testFindIdleDrones_whenDroneSavedSuccessfulOnDatabase(){
-        when(droneRepository.findAllByState(any())).thenReturn(List.of(createdDrone()));
+        when(droneRepository.findAllByState(any())).thenReturn(createdDrones());
         List<DroneModel> drones =  droneServiceimpl.findIdleDrones();
         assertEquals(createdDrone().getSerialNumber(),drones.get(0).getSerialNumber());
         assertEquals(createdDrone().getBattery(),drones.get(0).getBattery());
@@ -86,21 +86,21 @@ public class DroneServiceImplTest {
     @DisplayName("when the add medication items to wrong drone id")
     public void testAddMedication_whenWrongDroneId(){
         when(droneRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(NotFoundException.class, ()-> droneServiceimpl.addMedicationItems(1L,List.of(new MedicationItemRequest())));
+        assertThrows(NotFoundException.class, ()-> droneServiceimpl.addMedicationItems(1L,medicationItemRequestModelList()));
     }
 
     @Test
     @DisplayName("when the add medication items to drone with battery capacity less than 25%")
     public void testAddMedication_whenDroneBatteryLessThan_25(){
         when(droneRepository.findById(any())).thenReturn(Optional.of(createdDroneWithTENBattery()));
-        assertThrows(InvalidDroneBatteryException.class, ()-> droneServiceimpl.addMedicationItems(1L,List.of(medicationItemRequestModel())));
+        assertThrows(InvalidDroneBatteryException.class, ()-> droneServiceimpl.addMedicationItems(1L,medicationItemRequestModelList()));
     }
 
     @Test
     @DisplayName("when the add medication items to drone with medication weight greater than drone weight")
     public void testAddMedication_whenDroneWeightLessThanMedicationWeight(){
         when(droneRepository.findById(any())).thenReturn(Optional.of(createdDroneWithOneWeight()));
-        assertThrows(InvalidDroneWeightCarryException.class, ()-> droneServiceimpl.addMedicationItems(1L,List.of(medicationItemRequestModel())));
+        assertThrows(InvalidDroneWeightCarryException.class, ()-> droneServiceimpl.addMedicationItems(1L,medicationItemRequestModelList()));
     }
 
     @Test
