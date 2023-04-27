@@ -185,7 +185,7 @@ components:
       properties:
         battery:
           type: integer
-          format: int64
+          format: int32
           example: 100
     MedicationItemRequest:
       type: object

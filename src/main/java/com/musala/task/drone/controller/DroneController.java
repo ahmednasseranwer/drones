@@ -1,6 +1,5 @@
 package com.musala.task.drone.controller;
 
-import com.musala.task.drone.aop.LogExecutionTime;
 import com.musala.task.drone.api.DroneApi;
 import com.musala.task.drone.model.DroneBattery;
 import com.musala.task.drone.model.DroneModel;
@@ -36,8 +35,8 @@ public class DroneController implements DroneApi {
     @RequestMapping(
             method = RequestMethod.POST,
             value = "/drone",
-            produces = { "application/json" },
-            consumes = { "application/json" }
+            produces = {"application/json"},
+            consumes = {"application/json"}
     )
     @Override
     public ResponseEntity<Void> _registerDrone(@Valid @RequestBody DroneModel droneModel) {
@@ -65,7 +64,7 @@ public class DroneController implements DroneApi {
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/drone/{droneId}/battery",
-            produces = { "application/json" }
+            produces = {"application/json"}
     )
     @Override
     public ResponseEntity<DroneBattery> _checkBattery(@PathVariable("droneId") Long droneId) {
@@ -83,7 +82,7 @@ public class DroneController implements DroneApi {
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/drone/status/idle",
-            produces = { "application/json" })
+            produces = {"application/json"})
     @Override
     public ResponseEntity<List<DroneModel>> _idleDrone() {
         return new ResponseEntity<>(droneService.findIdleDrones(), HttpStatus.OK);
@@ -102,12 +101,12 @@ public class DroneController implements DroneApi {
     @RequestMapping(
             method = RequestMethod.POST,
             value = "/drone/{droneId}/medication-items",
-            produces = { "application/json" },
-            consumes = { "application/json" }
+            produces = {"application/json"},
+            consumes = {"application/json"}
     )
     @Override
     public ResponseEntity<Void> _loadMedicationItems(@PathVariable("droneId") Long droneId, @Valid @RequestBody(required = false) List<MedicationItemRequest> medicationItemRequest) {
-        droneService.addMedicationItems(droneId,medicationItemRequest);
+        droneService.addMedicationItems(droneId, medicationItemRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
@@ -117,12 +116,12 @@ public class DroneController implements DroneApi {
      *
      * @param droneId drone id (required)
      * @return successful operation (status code 200)
-     *         or Bad Request (status code 400)
+     * or Bad Request (status code 400)
      */
     @RequestMapping(
             method = RequestMethod.GET,
             value = "/drone/{droneId}/medication-items",
-            produces = { "application/json" }
+            produces = {"application/json"}
     )
     @Override
     public ResponseEntity<List<MedicationItemRequest>> _getMedicationItemsByDroneSerialNumber(

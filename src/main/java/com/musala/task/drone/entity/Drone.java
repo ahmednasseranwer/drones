@@ -31,7 +31,7 @@ public class Drone {
     @Column(name = "weight_limit", nullable = false)
     @Min(0)
     @Max(500)
-    private int weightLimit;
+    private Integer weightLimit;
 
     @Column(name = "battery", nullable = false)
     @Max(100)

@@ -1,7 +1,6 @@
 package com.musala.task.drone.entity.converter;
 
 
-
 import com.musala.task.drone.model.DroneModel;
 
 import javax.persistence.AttributeConverter;

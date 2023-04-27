@@ -3,7 +3,6 @@ package com.musala.task.drone.aop;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -12,7 +11,6 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -33,7 +31,6 @@ public class RestControllerAspect {
     }
 
 
-
     @Before("pointcut()")
     public void logMethod(JoinPoint joinPoint) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
@@ -48,20 +45,6 @@ public class RestControllerAspect {
             logger.error("Error while converting", e);
         }
     }
-
-    @AfterReturning(pointcut = "pointcut()", returning = "entity")
-    public void logMethodAfter(JoinPoint joinPoint, ResponseEntity<?> entity) {
-        MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        RequestMapping mapping = signature.getMethod().getAnnotation(RequestMapping.class);
-
-        try {
-            logger.info("<== path(s): {}, method(s): {}, retuning: {}",
-                    mapping.path(), mapping.method(), mapper.writeValueAsString(entity));
-        } catch (JsonProcessingException e) {
-            logger.error("Error while converting", e);
-        }
-    }
-
 
 
     private Map<String, Object> getParameters(JoinPoint joinPoint) {

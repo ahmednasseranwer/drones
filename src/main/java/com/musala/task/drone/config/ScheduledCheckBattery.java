@@ -10,7 +10,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.text.DecimalFormat;
 import java.util.List;
 
 @SpringBootApplication
@@ -22,15 +21,14 @@ public class ScheduledCheckBattery {
     private DroneRepository droneRepository;
 
     static final Logger log = LoggerFactory.getLogger(ScheduledCheckBattery.class);
+
     @Scheduled(fixedRate = 5000)
     public void scheduleFixedRateTaskAsync() throws InterruptedException {
 
         List<Drone> allDrones = droneRepository.findAll();
-        allDrones.stream().forEach(i->{
-            log.info("serial number : "+i.getSerialNumber()+" with battery capacity : "+i.getBattery()+"%");
-        });
+        allDrones.stream().forEach(i ->
+            log.info(String.format("Drone with serial number : %s with battery capacity: %d %% ",  i.getSerialNumber(), i.getBattery())));
         Thread.sleep(10000);
-
     }
 
 }

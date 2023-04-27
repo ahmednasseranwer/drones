@@ -22,8 +22,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.persistence.RollbackException;
-import javax.transaction.TransactionalException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -71,7 +69,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(final MethodArgumentTypeMismatchException ex, final WebRequest request) {
         logger.info(ex.getClass().getName());
 
-        return new ResponseEntity<>( new ErrorApiResponse(HttpStatus.BAD_REQUEST.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.BAD_REQUEST.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({ConstraintViolationException.class})
@@ -100,7 +98,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.info(problemRunTimeException.getClass().getName());
         final ErrorApiResponse errorApiResponse = new ErrorApiResponse(problemRunTimeException.errorApiResponse.getCode(), problemRunTimeException.errorApiResponse.getMessage());
 
-        return new ResponseEntity<>(errorApiResponse,new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorApiResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     // 404
@@ -108,7 +106,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleNoHandlerFoundException(final NoHandlerFoundException ex, final HttpHeaders headers, final HttpStatus status, final WebRequest request) {
         logger.info(ex.getClass().getName());
 
-        return new ResponseEntity<>( new ErrorApiResponse(404, ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorApiResponse(404, ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.NOT_FOUND);
     }
 
     // 405
@@ -133,22 +131,22 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         builder.append(" media type is not supported. Supported media types are ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
 
-        return new ResponseEntity<>( new ErrorApiResponse(HttpStatus.BAD_REQUEST.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.BAD_REQUEST.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     //409
     @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<Object> handleSQLException(final DataIntegrityViolationException ex, final WebRequest request) {
         logger.info(ex.getClass().getName());
-        logger.error("error", ex);
+        logger.error("DataIntegrityViolationError", ex);
 
-        return new ResponseEntity<>( new ErrorApiResponse(HttpStatus.CONFLICT.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.CONFLICT.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAll(final Exception ex, final WebRequest request) {
         logger.info(ex.getClass().getName());
-        logger.error("error", ex);
+        logger.error("Exception", ex);
 
         return new ResponseEntity<>(new ErrorApiResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getLocalizedMessage()), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -45,10 +45,10 @@ public class DroneServiceImpl implements DroneService {
     @Override
     public void addMedicationItems(Long droneId, List<MedicationItemRequest> medicationItemRequestList) {
         Drone drone = droneRepository.findById(droneId).orElseThrow(NotFoundException::new);
-        int cumulativeWeightSum = medicationItemRequestList.stream().mapToInt(item-> item.getWeight()).sum();
-        validateDrone(drone,cumulativeWeightSum);
-        updateDroneCarryWeightAndState(drone,cumulativeWeightSum);
-        addMedicationItemsToDrone(drone,medicationItemRequestList);
+        int cumulativeWeightSum = medicationItemRequestList.stream().mapToInt(MedicationItemRequest::getWeight).sum();
+        validateDrone(drone, cumulativeWeightSum);
+        updateDroneCarryWeightAndState(drone, cumulativeWeightSum);
+        addMedicationItemsToDrone(drone, medicationItemRequestList);
         droneRepository.save(drone);
     }
 
@@ -59,33 +59,33 @@ public class DroneServiceImpl implements DroneService {
     }
 
     private void addMedicationItemsToDrone(Drone drone, List<MedicationItemRequest> medicationItemRequestList) {
-        if(drone.getMedicationList()==null){
+        if (drone.getMedicationList() == null) {
             drone.setMedicationList(new ArrayList<>());
         }
-       List<Medication> medicationList =  droneMapper.toMedicationItems(medicationItemRequestList);
+        List<Medication> medicationList = droneMapper.toMedicationItems(medicationItemRequestList);
         medicationList.forEach(medication -> medication.setDrone(drone));
         drone.getMedicationList().addAll(medicationList);
 
     }
 
     private void updateDroneCarryWeightAndState(Drone drone, int cumulativeWeightSum) {
-        drone.setWeightLimit(drone.getWeightLimit()-cumulativeWeightSum);
+        drone.setWeightLimit(drone.getWeightLimit() - cumulativeWeightSum);
         drone.setState(DroneModel.StateEnum.LOADING);
     }
 
-    private void validateDrone(Drone drone,Integer medicationItemsWeightSum) {
+    private void validateDrone(Drone drone, Integer medicationItemsWeightSum) {
         validateDroneBattery(drone.getBattery());
-        validateDroneCanCarryMedicationItemsWeight(drone.getWeightLimit(),medicationItemsWeightSum);
+        validateDroneCanCarryMedicationItemsWeight(drone.getWeightLimit(), medicationItemsWeightSum);
     }
 
     private void validateDroneCanCarryMedicationItemsWeight(Integer droneWeightLimit, Integer medicationItemsWeightSum) {
-        if(medicationItemsWeightSum>droneWeightLimit){
+        if (medicationItemsWeightSum > droneWeightLimit) {
             throw new InvalidDroneWeightCarryException();
         }
     }
 
     private void validateDroneBattery(Integer battery) {
-        if(battery<25) {
+        if (battery < 25) {
             throw new InvalidDroneBatteryException();
         }
     }

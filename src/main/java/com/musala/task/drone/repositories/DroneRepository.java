@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DroneRepository extends JpaRepository<Drone,Long> {
+public interface DroneRepository extends JpaRepository<Drone, Long> {
     List<Drone> findAllByState(DroneModel.StateEnum state);
 }

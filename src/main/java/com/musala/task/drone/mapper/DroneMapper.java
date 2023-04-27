@@ -11,10 +11,12 @@ import java.util.List;
 @Mapper
 public interface DroneMapper {
 
-     Drone toDroneEntity(DroneModel droneModel);
+    Drone toDroneEntity(DroneModel droneModel);
 
-     List<DroneModel> toDronesModel(List<Drone> drones);
-     DroneBattery toDroneBattery(Drone drone);
+    List<DroneModel> toDronesModel(List<Drone> drones);
+
+    DroneBattery toDroneBattery(Drone drone);
+
     List<Medication> toMedicationItems(List<MedicationItemRequest> medicationItemRequestList);
 
     List<MedicationItemRequest> toMedicationItemsModel(List<Medication> medicationList);
