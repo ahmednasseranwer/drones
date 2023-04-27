@@ -22,7 +22,9 @@ public class DroneFixture {
         medication.setCode("FFF");
         medication.setWeight(2);
         medication.setName("NAME");
-        drone.setMedicationList(List.of(medication));
+        List<Medication> medicationList = new ArrayList<>();
+        medicationList.add(medication);
+        drone.setMedicationList(medicationList);
         return drone;
     }
 
