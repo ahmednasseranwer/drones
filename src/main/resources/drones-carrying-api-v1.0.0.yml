@@ -1,0 +1,220 @@
+openapi: 3.0.3
+info:
+  title: Drones Carrying APIs - OpenAPI 3.0
+  description:  Drones Carrying APIs
+  version: 1.0.1
+servers:
+  - url: http://drone-server/api/
+tags:
+  - name: drone
+    description: tag apis
+paths:
+  /drone:
+    post:
+      tags:
+        - drone
+      summary: register drone
+      description: register drone
+      operationId: registerDrone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DroneModel'
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            droneId:
+              schema:
+                type: integer
+                format: int64
+              description: created droneId.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+  /drone/status/idle:
+    get:
+      tags:
+        - drone
+      summary: return all idle drones
+      description: get all drones with idle status
+      operationId: idleDrone
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DroneModel'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+  /drone/{droneId}/battery:
+    get:
+      tags:
+        - drone
+      summary: return drone battery
+      description: returns all drone battery
+      operationId: checkBattery
+      parameters:
+        - name: droneId
+          in: path
+          description: drone id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DroneBattery'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+  /drone/{droneId}/medication-items:
+    post:
+      tags:
+        - drone
+      summary: loading drone with medication items
+      description: loading drone with medixcation items
+      operationId: loadMedicationItems
+      parameters:
+        - name: droneId
+          in: path
+          description: drone id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/MedicationItemRequest'
+
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+    get:
+      tags:
+        - drone
+      summary: get all loaded medication items.
+      description: get all loaded medication items.
+      operationId: getMedicationItemsByDroneSerialNumber
+      parameters:
+        - name: droneId
+          in: path
+          description: drone id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MedicationItemRequest'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorApiResponse'
+components:
+  schemas:
+    DroneModel:
+      type: object
+      required:
+        - serialNumber
+        - model
+        - weightLimit
+        - battery
+        - state
+      properties:
+        serialNumber:
+          type: string
+          format: string
+          maxLength: 100
+          example: "fkrigmqkdmwkednmwmefqewjdwef"
+        model:
+          type: string
+          enum: [Lightweight, Middleweight, Cruiserweight, Heavyweight]
+          example: "Lightweight"
+        weightLimit:
+          type: integer
+          example: 40
+        battery:
+          type: integer
+          example: 100
+          minimum: 0
+          maximum: 100
+        state:
+          type: string
+          enum: [IDLE, LOADING, LOADED, DELIVERING, DELIVERED, RETURNING]
+          example: IDLE
+    DroneBattery:
+      type: object
+      properties:
+        battery:
+          type: integer
+          format: int64
+          example: 100
+    MedicationItemRequest:
+      type: object
+      required:
+        - name
+        - weight
+        - code
+        - image
+      properties:
+        name:
+          type: string
+          example: "Altroxin"
+        weight:
+          type: integer
+          format: int32
+          example: "5"
+        code:
+          type: string
+          example: 32123123
+        image:
+          type: string
+          example: "123178234618972364781263478962139784691827364987623467892345234523452345234523452345762394"
+    ErrorApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 215
+        message:
+          type: string
+          example: "Failed to convert value of type [String]  to required type [Long];"
